@@ -3,7 +3,7 @@
 #PBS -l mem=15gb,nodes=1:ppn=4,walltime=48:00:00 
 #PBS -m abe 
 #PBS -M llei@umn.edu
-#PBS -q mesabi
+#PBS -q lab-long
 
 #	Required for Java
 #module load gatk/2.7.2 
