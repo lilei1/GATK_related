@@ -1,0 +1,22 @@
+#!/bin/sh
+
+#PBS -l mem=22gb,nodes=1:ppn=8,walltime=10:00:00
+#PBS -m ae
+#PBS -M llei@umn.edu 
+#PBS -q mesabi
+module load picard
+#IFS=$'\n' 
+for SAMPLE in $(cat ${HOME}/Deleterious_mutation_project/mapping_sample/wild_accs_bam/SAM_Processing/depued_file_sample_id)
+do
+    ${PTOOL}/picard.jar AddOrReplaceReadGroups \
+            INPUT="${HOME}/Deleterious_mutation_project/mapping_sample/wild_accs_bam/SAM_Processing/deduped/${SAMPLE}_2015-12-16_2015-12-21_deduped.bam" \
+            OUTPUT="${HOME}/Deleterious_mutation_project/wild_species_ID/group_bam/${SAMPLE}_2015-12-16_2015-12-21_deduped_grouped.bam" \
+            RGID= ${SAMPLE} \
+            RGPL= Illumina \
+            RGPU= ${SAMPLE} \
+            RGSM= ${SAMPLE} \
+            RGLB= ${SAMPLE} \
+            TMP_DIR="${HOME}/Scratch/Picard_Tmp" \
+            CREATE_INDEX=True
+    #   Create alignment statistics for finished BAM files
+done
