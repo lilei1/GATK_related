@@ -1,0 +1,77 @@
+#!/bin/sh -l
+
+#PBS -l mem=15gb,nodes=1:ppn=4,walltime=600:00:00 
+#PBS -m abe 
+#PBS -M llei@umn.edu 
+#PBS -q lab-600
+
+#module load gatk
+#   The program we are calling for realignment
+#HOME = "/home/morrellp/"
+#   The reference sequence
+PROGRAM=/panfs/roc/itascasoft/gatk/3.3.0/GenomeAnalysisTK.jar
+REF=/home/morrellp/shared/References/Reference_Sequences/Barley/Morex/Morex_Reference.fasta
+#	The capture design
+#OUT_DIR= ${HOME}/Deleterious_mutation_project/wild_species_ID/gatk_out
+#   The alignment file
+ALIGNMENT=/home/morrellp/llei/Deleterious_mutation_project/wild_species_ID/group_bam
+#${CAPTURE}_AllSamples_2014-01-02.bam
+#	cd into the directory
+#module load java
+CAPTURE_DESIGN=/home/morrellp/shared/References/Reference_Sequences/Barley/Morex/Morex_Reference_ExCap_Design.bed
+module load java
+cd ${HOME}/Deleterious_mutation_project/wild_species_ID/group_bam/GATK_SNP_33samples
+#POS_SNP = alchemy_genotypes_BOPA2_geno_0.9pCall.bed
+#	Hapotypecaller Options
+#	--heterozygosity [float]
+#		the expected per-bp pairwise diversity
+#		using 0.015 from XXX 2007 based on Peter's suugestion
+#	--minPruning [int]
+#		SNPs and Indels have to be supported by at least [int] reads
+#		to be included in the analysis
+#		using 18, for an average of at least 2 per sample
+#		GATK docs warns about setting this too high and missing calls
+#module load gatk
+#_JAVA_OPTIONS="-Xmx15g -XX:MaxPermSize=10g" java -jar $PROGRAM\
+#java -Xmx4g -jar /panfs/roc/soft/modulefiles.common/gatk/3.4.0/GenomeAnalysisTK.jar\
+#mkdir -p ${HOME}/Deleterious_mutation_project/wild_species_ID/gatk_out/
+_JAVA_OPTIONS="-Xmx45g -XX:MaxPermSize=40g" java -jar $PROGRAM\
+	-T HaplotypeCaller\
+	--heterozygosity 0.015\
+	--minPruning 18\
+	-L ${CAPTURE_DESIGN}\
+	-I ${ALIGNMENT}/WBDC001_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC004_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC005_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC008_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC002_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC006_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC009_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC010_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC018_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC020_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC022_2015-06-24_2015-07-02_finished_grouped.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_038_2015-12-16_2015-12-21_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_150_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_142_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_16_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_115_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_173_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_340_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_92_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_234_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_007_2015-12-16_2015-12-21_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_012_2015-12-16_2015-12-21_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_348_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_28_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_350_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_35_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_32_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_82_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_255_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_336_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_42_2013-11-21_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_302_2013-11-20_Finished_Realigned.sorted.bam\
+	-I ${ALIGNMENT}/WBDC_20_2013-11-20_Finished_Realigned.sorted.bam\
+	-R ${REF}\
+	-o ${HOME}/Deleterious_mutation_project/wild_species_ID/group_bam/GATK_SNP_33samples/RawVCF_33samples.vcf
